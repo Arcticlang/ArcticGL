@@ -1,4 +1,5 @@
 import Transform from "../math/Transform";
+import SceneManager from "../scene/SceneManager";
 import { BaseNode } from "./interfaces/BaseNode";
 import { ChildableNode } from "./interfaces/ChildableNode";
 
@@ -65,6 +66,20 @@ export class _Node implements BaseNode {
 }
 
 export default class Node extends _Node {
+    static getAllNodesOfType<T extends Node>(type: string) {
+        let nodes: T[] = [];
+
+        const treeSearch = (node: _Node) => {
+            if(node instanceof Node && node.type == type) {
+                nodes.push(node as T);
+            }
+            node.children.forEach(child => treeSearch(child as Node), this);
+        }
+        treeSearch(SceneManager.getScene());
+
+        return nodes;
+    }
+
 	readonly type: string = "Node";
 
 	private _parent: Node;
