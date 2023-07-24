@@ -1,5 +1,4 @@
 import REGL, { DrawCommand, Regl } from "regl";
-import Color from "../color/Color";
 import Matrix4x4 from "../math/Matrix4x4";
 import Sprite from "../nodes/gfx/Sprite";
 import { _Node } from "../nodes/Node";
@@ -17,6 +16,7 @@ type DrawTexture = {
 	model: number[];
 	diffuse: REGL.Texture2D;
 	tint: RGBA;
+	drawingOrder: number;
 };
 
 export default class Renderer {
@@ -37,7 +37,7 @@ export default class Renderer {
 			0,
 			canvas.height,
 			-1,
-			100
+			1000
 		);
 		this.viewProjection = Matrix4x4.identity();
 
@@ -107,7 +107,6 @@ export default class Renderer {
 	}
 
 	treeSearch(node: BaseNode) {
-		this.drawTextures = [];
 		if (node instanceof Sprite) {
 			this.renderSprite(node);
 		} else if (node instanceof TileMap) {
@@ -145,6 +144,8 @@ export default class Renderer {
 		
 					diffuse: this.gl.texture({ data: image }),
 					tint: tileMap.tint.roundToFloat().toRGBAArray(),
+
+					drawingOrder: tileMap.transform.zIndex
 				});
 			}
 		}
@@ -168,11 +169,15 @@ export default class Renderer {
 
 			diffuse: this.gl.texture({ data: image }),
 			tint: sprite.tint.roundToFloat().toRGBAArray(),
+
+			drawingOrder: sprite.transform.zIndex
 		});
 	}
 
 	drawAllSprites() {
+		this.drawTextures.sort((a, b) => a.drawingOrder + b.drawingOrder);
 		this.drawTexturedSquare(this.drawTextures);
+		this.drawTextures = [];
 	}
 
 	getTexCoord(texture: Texture) {
@@ -186,19 +191,13 @@ export default class Renderer {
 		const texSize = size.clone().divide(texScale);
 
 		return this.gl.buffer([
-			texOffset.x,
-			texOffset.y,
-			texOffset.x,
-			texOffset.y + texSize.y,
-			texOffset.x + texSize.x,
-			texOffset.y + texSize.y,
+			texOffset.x, texOffset.y,
+			texOffset.x, texOffset.y + texSize.y,
+			texOffset.x + texSize.x, texOffset.y + texSize.y,
 
-			texOffset.x + texSize.x,
-			texOffset.y + texSize.y,
-			texOffset.x + texSize.x,
-			texOffset.y,
-			texOffset.x,
-			texOffset.y,
+			texOffset.x + texSize.x, texOffset.y + texSize.y,
+			texOffset.x + texSize.x, texOffset.y,
+			texOffset.x, texOffset.y,
 		]);
 	}
 
