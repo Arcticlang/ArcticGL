@@ -84,6 +84,7 @@ export default class Node extends _Node {
 
 	private _parent: Node;
 
+    private _transform: Transform;
     transform: Transform;
 
 	constructor(name: string) {
@@ -91,7 +92,12 @@ export default class Node extends _Node {
 		this._parent = null!;
 
         this.transform = new Transform();
+        this._transform = this.transform.clone();
 	}
+
+    _postUpdate(): void {
+        this._transform = this.transform.clone();
+    }
 
     remove() {
         this.end();
@@ -111,5 +117,9 @@ export default class Node extends _Node {
         this._parent = v;
         this._parent.addChild(this);
 	}
+
+    get trueTransform() {
+        return this._transform;
+    }
 
 }

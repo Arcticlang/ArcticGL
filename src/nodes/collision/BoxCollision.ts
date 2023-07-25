@@ -17,12 +17,12 @@ export default class BoxCollision extends Node implements Collidable {
         this._size = size;
     }
 
-    _preUpdate(): void {
+    _postUpdate(): void {
         if(this.disabled) return;
 
-        const boxCollisions = Node.getAllNodesOfType<BoxCollision>("BoxCollision");
-        for(let boxCollision of boxCollisions) {
-            this.boxCollision(boxCollision);
+        const tileMaps = Node.getAllNodesOfType<TileMap>("TileMap");
+        for(let tileMap of tileMaps) {
+            this.tileMapCollision(tileMap);
         }
     }
 
@@ -34,42 +34,20 @@ export default class BoxCollision extends Node implements Collidable {
         const tileSize = tileMap.tileSize;
 
         const position = this.transform.position;
+        const truePosition = this.trueTransform.position;
+
+        console.log(Math.floor(position.x / tileSize), Math.floor(position.y / tileSize));
+        console.log(position.x, position.y);
 
         const collisionWithTile = (x: number, y: number) => {
-            return tileMap.getTile(new Vector2(x, y)) != null;
+            const tile = tileMap.getTile(new Vector2(x, y));
+            return tile != null;
         }
 
-        let tx = (position.x + this.size.x) / tileSize;
-        if(!collisionWithTile(tx, (position.y) / tileSize) &&
-            !collisionWithTile(tx, (position.y + this.size.y) / tileSize)) {
-                                
-            } else {
-                position.x = tx * tileSize - this.size.x - 1;
-            }
-        
-        tx = position.x / tileSize;
-        if(!collisionWithTile(tx, (position.y) / tileSize) &&
-            !collisionWithTile(tx, (position.y + this.size.y) / tileSize)) {
-                                
-            } else {
-                position.x = tx * tileSize + tileSize;
-            }
-
-        let ty = position.y / tileSize;
-        if(!collisionWithTile(position.x / tileSize, ty) &&
-            !collisionWithTile(position.x + this.size.x, ty)) {
-                                
-            } else {
-                position.y = ty * tileSize + tileSize;
-            }
-        
-        ty = (position.y + this.size.y) / tileSize;
-        if(!collisionWithTile(position.x / tileSize, ty) &&
-            !collisionWithTile(position.x + this.size.x, ty)) {
-                                
-            } else {
-                position.y = ty * tileSize - this.size.y - 1;
-            }
+        if(collisionWithTile(Math.floor(position.x / tileSize), Math.floor(position.y / tileSize))) {
+            console.log("COLLISIONS");
+            truePosition.set(position.x, position.y);
+        }
     }
 
     get size() {

@@ -117,7 +117,7 @@ export default class Renderer {
 	}
 
 	renderTileMap(tileMap: TileMap) {
-		const transform = tileMap.transform.clone();
+		const transform = tileMap.trueTransform.clone();
 
 		for(let x = 0; x < tileMap.size.x; x++) {
 			for(let y = 0; y < tileMap.size.y; y++) {
@@ -152,7 +152,7 @@ export default class Renderer {
 	}
 
 	renderSprite(sprite: Sprite) {
-		const transform = sprite.transform;
+		const transform = sprite.trueTransform;
 
 		const texture = sprite.texture;
 		const image = texture.image;

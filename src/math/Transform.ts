@@ -1,4 +1,3 @@
-import Camera from "../nodes/gfx/Camera";
 import Matrix4x4 from "./Matrix4x4";
 import { Vector2 } from "./Vector2";
 import Vector3 from "./Vector3";
@@ -10,6 +9,8 @@ export default class Transform {
 	scale: Vector2 = Vector2.ONE;
 	rotation: Vector3 = Vector3.ZERO;
 	angle: number = 0;
+
+	zIndex: number = 0;
 
 	rotationAlignment: AlignmentType = "center";
 

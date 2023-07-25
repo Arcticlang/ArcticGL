@@ -5,6 +5,7 @@ import Renderer from "./gfx/Renderer";
 import SceneManager from "./scene/SceneManager";
 import Camera from "./nodes/gfx/Camera";
 import GameData from "./GameData";
+import { Vector2 } from "./math/Vector2";
 
 export type GameOptions = {
 	title: string;
@@ -36,7 +37,9 @@ export default class Game {
 		this.domRenderer.width = GameData.width;
 		this.domRenderer.height = GameData.height;
 
-		Camera.mainCamera = new Camera("Main Camera");
+		const camera = new Camera("Main Camera");
+		camera.transform.position = new Vector2(-(GameData.width / 2), -(GameData.height / 2));
+		Camera.mainCamera = camera;
 	}
 
 	run() {

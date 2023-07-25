@@ -10,6 +10,8 @@ import TileMap from './nodes/gfx/TileMap';
 import Tileset from './gfx/Tileset';
 import Sprite from './nodes/gfx/Sprite';
 import Texture from './gfx/Texture';
+import Camera from './nodes/gfx/Camera';
+import BoxCollision from './nodes/collision/BoxCollision';
 
 
 const game = new Game({
@@ -59,15 +61,20 @@ const main = async () => {
     const scene = new Scene("Game");
 
     const tileMap = new TileMap("Tiles", tileset);
-    tileMap.transform.position.y += 450;
+    tileMap.transform.position = new Vector2(-150, 150);
     tileMap.tileSize = 32;
-    loadMap(tileMap, new Vector2(15, 15), map1);
+    await loadMap(tileMap, new Vector2(15, 15), map1);
 
     const player = new Sprite("Player");
+    player.transform.zIndex = 10;
     player.transform.scale = new Vector2(32, 32);
-    player.transform.position = new Vector2(100, 600);
-    player.texture = testTexture;
-    console.log(playerSheet.textures[1]);
+    player.transform.position = new Vector2(-32, 0);
+    player.texture = playerSheet.textures[0];
+    player.addChild(new BoxCollision("Collision", new Vector2(32, 32)));
+
+    player.update = () => {
+        player.transform.position.y -= 1;
+    }
 
     scene.addChild(player);
     scene.addChild(tileMap);

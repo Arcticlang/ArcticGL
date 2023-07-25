@@ -5,6 +5,9 @@ import { Vector2 } from "../../math/Vector2";
 import Color from "../../color/Color";
 
 export default class TileMap extends Node {
+    readonly type: string = "TileMap";
+
+    collisionDisabled: boolean = false;
 
     private _size: Vector2;
 
